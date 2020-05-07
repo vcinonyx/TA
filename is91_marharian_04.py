@@ -25,7 +25,7 @@ def partition(A, p, r):
     global counter
     for j in range(p, r):
         counter +=1
-        if A[j] <  x:
+        if A[j] < x:
             i += 1
             A[i], A[j] = A[j], A[i]
     A[i+1], A[r] = A[r], A[i+1]
