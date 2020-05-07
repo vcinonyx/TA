@@ -2,6 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def bubble_sort(mass):
     counter = 0
     for i in range(len(mass) - 1):
