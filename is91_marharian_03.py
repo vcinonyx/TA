@@ -1,7 +1,7 @@
 import random
 import numpy as np
-import matplotlib.pyplot as plt
 from time import time
+import matplotlib.pyplot as plt
 
 def insertion_sort(input_mass):
     mass = input_mass
