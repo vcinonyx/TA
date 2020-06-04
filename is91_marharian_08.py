@@ -1,111 +1,92 @@
-import os
+import os  # підключаємо модуль для відкриття файлу після завершення роботи програми
 
-results = []
+results = []  # список результатів (шляхів для заданої суми)
 
-class Node:
-    def __init__(self, data):
-        self.root = data
-        self.left = None
-        self.right = None
+class Node:  # клас "вузол"
+    def __init__(self, data):  # конструктор вузла, в який передається значення вузла
+        self.root = data  # запис у вузол значення вхідного елемента
+        self.left = None  # за замовчуванням лівий вузол - порожній
+        self.right = None  # за замовчуванням правий вузол - порожній
 
-def print_sum_path(root, path, k):
-    # empty node
-    if not root:
-        return
-
-    # add current node to the path
-    path.append(root.root)
-
-    # check if there's any k sum path
-    # in the left sub-tree.
-    print_sum_path(root.left, path, k)
-
-    # check if there's any k sum path
-    # in the right sub-tree.
-    print_sum_path(root.right, path, k)
-
-    # check if there's any k sum path that
-    # terminates at this node
-    # Traverse the entire path as
-    f = 0
-    for j in range(len(path) - 1, -1, -1):
-        f += path[j]
-        # If path sum is k, print the path
-        if f == k:
-            print_vector(path, j)
-            # Remove the current element
-    # from the path
-    path.pop(-1)
+def print_sum_path(root, path, SUM):  # root - вузол, path - список вузлів шляху, SUM - задана сума
+    if not root:  # якщо вузол порожній
+        return  # повертаємось на крок назад
+    path.append(root.root)  # додаємо поточний елемент до шляху
+    print_sum_path(root.left, path, SUM)  # перевірка на шлях суми в лівому піддереві за допомогою рекурсії
+    print_sum_path(root.right, path, SUM)  # перевірка на шлях суми в лівому піддереві за допомогою рекурсії
+    f = 0  # перевірка чи є будь-який шлях для заданої суми що закінчуються в даному вузлі
+    for j in range(len(path) - 1, -1, -1):  # починаючи з останнього елемента і до першого
+        f += path[j]  # обчислюємо суму елементів
+        if f == SUM:  # якщо сума елементів шляху дорівнює шуканій сумі
+            print_vector(path, j)  # виклик функції для виведення шляху
+    path.pop(-1)  # видаляємо поточний елемент з масива
 
 def print_vector(v, i):
-    global results
-    output = ""
-    for j in range(i, len(v)-1):
-        output += (str(v[j])+"+")
-    output += str(v[-1])
-    results.append(output)
+    global results  # список результатів
+    output = ""   # рядок-результат
+    for j in range(i, len(v)-1):  # починаючи з елемента з індексом і і до останнього елемента
+        output += (str(v[j])+"+")  # якщо елементів більше за 1 то записуємо через '+'
+    output += str(v[-1])  # додаємо останній елемент шляху до рядка
+    results.append(output)  # додаємо створений рядок до списку результатів
 
-def sum_path(root, k):
-    path = []
-    print_sum_path(root, path, k)
-
-
-def in_order(root, mas):
-    if root is None:
+def in_order(root, mas):  # in_order обхід дерева, mas - масив, куди записуються елементи при обході
+    if root is None:  # якщо вузол порожній, то повертаємось до попереднього
         return
-    in_order(root.left, mas)
-    mas.append(root.root)
-    in_order(root.right, mas)
+    in_order(root.left, mas)  # рекурсивний виклик для лівого вузла
+    mas.append(root.root)  # вставка значення вузла в масив
+    in_order(root.right, mas)  # рекурсивний виклик для правого вузла
 
 
-def bst(root, arr): #
-    if root is None:
-        return
-    bst(root.left, arr)
-    root.root = (arr[0])
-    arr.pop(0)
-    bst(root.right, arr)
+def bst(root, arr):  # перетворення бінарного дерева в бінарне дерево пошуку, root - дерево, arr - відсортований масив
+    if root is None:  # якщо вузла не існує (при рекурсивному виклику функції)
+        return  # повертаємось назад
+    bst(root.left, arr)  # рекурсивний виклик для лівого вузла
+    root.root = (arr[0])  # вставка елемента з відсортованого масива в вузол
+    arr.pop(0)   # видалення  вставленого елемента з масива
+    bst(root.right, arr)  # рекурсивний виклик для правого вузла
 
 
-def arr_to_tree(root, dataArray, index):  # create array
-    if dataArray[index] == 0:
-        return index
-    if dataArray[index + 1] != 0:
-        root.left = Node(dataArray[index+1])
-    index = arr_to_tree(root.left, dataArray, index+1)
-    if dataArray[index + 1] != 0:
-        root.right = Node(dataArray[index+1])
-    index = arr_to_tree(root.right, dataArray, index+1)
-    return index
+def arr_to_tree(root, Array, index):  # заповнення дерева
+    if Array[index] == 0:  # якщо елемент масива за даним індексом дорівнює 0,
+        return index  # то повертаємо його індекс
+    if Array[index + 1] != 0:   # якщо наступний за індексом елемент не 0
+        root.left = Node(Array[index+1])   # то  створюється лівий дочірній вузол
+    index = arr_to_tree(root.left, Array, index+1)  # рекурсивно викликається для лівого дочірнього вузла, визн індекс
+    if Array[index + 1] != 0:   # якщо наступний за індексом не є 0
+        root.right = Node(Array[index+1])   # створюється правий дочірній вузол, значення якого = елементу з індексом+1
+    index = arr_to_tree(root.right, Array, index+1)   # рекурсивно викликається для правого дочірнього вузла
+    return index    # повертаємо індекс
 
-def read_file(name):
-    input_file = open(name)
-    read_array = []
-    m = []
-    for line in input_file.readlines():
-        m = line.split()
-    read_array = [int(m[i]) for i in range(len(m))]
-    input_file.close()
-    return read_array
+def read_file(name):  # заповнення масиву з файла
+    input_file = open(name)  # вікдриваємо файл
+    read_array = []   # результуючий масив
+    m = []   # проміжний масив для збереження зчитаних елементів
+    for line in input_file.readlines():  # порядково
+        m = line.split()   # m - масив з елементів у файлі типу str
+    read_array = [int(m[i]) for i in range(len(m))]  # перетворюємо str на int
+    input_file.close()  # закриваємо файл
+    return read_array   # повертаємо зчитаний масив
 
 def save_file(name):
-    global results
-    filename = name.replace('input_', 'is91_marharian_08_output_')
-    output = open(filename, 'w')
-    for string in results:
+    global results  # глобальна змінна, в якій зберігаються шляхи для сум
+    filename = name.replace('input_', 'is91_marharian_08_output_')  # ім'я створюваного файла
+    output = open(filename, 'w')  # відкриваємо створений файл
+    for string in results:   # по рядкам записуємо результат
         output.writelines(string + "\n")
-    os.startfile(filename)
+    os.startfile(filename)  # автоматичне відкриття створеного файла після виконання програми
 
 
 if __name__ == '__main__':
-    file_name = input("Введіть назву файла: ")
-    arr = read_file(file_name)
-    root = Node(arr[0])
-    arr_to_tree(root, arr, 0)
-    array = []
-    in_order(root, array)  # returns an in order array
-    array.sort()
-    bst(root, array)  # convert binary tree to bst
-    sum_path(root, int(input("Введіть суму: ")))
-    save_file(file_name)
+    file_name = input("Введіть назву файла: ")  # вводимо файл типу input_10a.txt
+    arr = read_file(file_name)  # масив зі зчитаного файла
+    root = Node(arr[0])  # перший елемент масива - корінь бінарного дерева
+    arr_to_tree(root, arr, 0)  # будуємо дерево з масива
+    array = []  # порожній масив для збереження елементів під час in-order обходу
+    in_order(root, array)  # in-order обхід дерева, результат записується в масив array
+    array.sort()  # сортування array за зростанням
+    bst(root, array)  # перетворення бінарного дерева на бінарне дерево пошуку
+    path = []  # порожній масив для збереження елементів шляху суми
+    print_sum_path(root, path,  int(input("Введіть суму: ")))  # виклик функції для знаходження шляхів, введення суми
+    save_file(file_name)  # збереження результатів
+
 
