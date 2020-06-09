@@ -3,25 +3,26 @@ from numpy import sqrt
 from math import inf
 from os import startfile
 
+
 def find_path(X, Y):
-    way = []
-    M = np.zeros([n, n])  # створення матриці відстаней розміром N x N
-    for i in range(n):
+    way = []  # список, що зберігає індекси пройдених міст в порядку обходу
+    DistanceMatrix = np.zeros([n, n])  # створення матриці відстаней розміром N x N
+    for i in range(n):  # для кожної комірки матриці відстаней
         for j in range(n):
             if i != j:
-                M[i, j] = sqrt((X[i] - X[j]) ** 2 + (Y[i] - Y[j]) ** 2)  # заповнення матриці відстаней
+                DistanceMatrix[i, j] = sqrt((X[i] - X[j]) ** 2 + (Y[i] - Y[j]) ** 2)  # заповнення матриці відстаней
             else:
-                M[i, j] = inf  # заповнення головної діагоналі матриці
+                DistanceMatrix[i, j] = inf  # заповнення головної діагоналі матриці
 
-    way.append(0)  # додаємо до шляху індекс початкової вершини
-    for i in range(1, n):
-        s = []
+    way.append(0)  # додаємо до шляху індекс початкової вершини, в нашому випадку завжди 0
+
+    for i in range(1, n):  # починаючи з другого міста
+        s = []  # масив для збереження відстаней з міста
         for j in range(n):
-            s.append(M[way[i - 1], j])  # обчислення відстаней всіх можливих шляхів з даної вершини
+            s.append(DistanceMatrix[way[i - 1], j])  # обчислення відстаней всіх можливих шляхів з даної вершини
         way.append(s.index(min(s)))  # додаємо до шляху вершину, відстань до якої - найкоротша
         for j in range(i):
-            M[way[i], way[j]] = inf  # позначаємо відстані до вершини як нескінченність, тобто вони недоступні
-
+            DistanceMatrix[way[i], way[j]] = inf  # позначаємо  пройдені вершинин як нескінченність, тобто недоступні
     S = sum([sqrt((X[way[i]] - X[way[i + 1]]) ** 2 + (Y[way[i]] - Y[way[i + 1]]) ** 2) for i in range(n - 1)]) \
         + sqrt((X[way[n - 1]] - X[way[0]]) ** 2 + (Y[way[n - 1]] - Y[way[0]]) ** 2)  # обчислення суми відстаней
     return way, S
@@ -47,10 +48,10 @@ def save(filename, _path, result):
     for node in _path:
         output.write(str(node) + ' ')
     output.close()
-    startfile(filename)
+
 
 if __name__ == '__main__':
-    for i in range(1, 9):
+    for i in range(1, 2):
         X, Y = readfile("input_0" + str(i) + ".txt")  # заповнення масивів координат
         n = len(X)  # кількість вершин
         path, sums = find_path(X, Y)  # знаходимо шлях та суму
